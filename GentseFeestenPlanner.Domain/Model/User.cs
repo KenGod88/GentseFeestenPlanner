@@ -8,5 +8,12 @@ namespace GentseFeestenPlanner.Domain.Model
 {
     internal class User
     {
+        public int UserId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public List<DayPlan> DayPlans { get; set; }
+        public decimal DailyBudget { get; set; }
+
+
     }
 }
