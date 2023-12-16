@@ -8,4 +8,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GentseFeestenPlanner.Database\GentseFeestenPlanner.Database.csproj" />
+    <ProjectReference Include="..\GentseFeestenPlanner.Domain\GentseFeestenPlanner.Domain.csproj" />
+    <ProjectReference Include="..\GentseFeestenPlanner.WPF\GentseFeestenPlanner.WPF.csproj" />
+  </ItemGroup>
+
 </Project>

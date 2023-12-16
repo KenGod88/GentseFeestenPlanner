@@ -7,4 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GentseFeestenPlanner.Domain\GentseFeestenPlanner.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
