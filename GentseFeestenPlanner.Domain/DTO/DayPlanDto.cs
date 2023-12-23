@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Domain.DTO
 {
-    internal class DayPlanDto
+    internal class DayPlanDTO
     {
         public DateTime Date { get; set; }
         public UserDto User { get; set; }
