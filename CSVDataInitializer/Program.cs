@@ -10,7 +10,7 @@ ClearDatabaseTables(connectionString);
 List<Event> events = LoadEventsFromCsv("gentse-feesten-evenementen-202324.csv");
 
 // Load VIP users from CSV
-List<User> Users = LoadUsersFromCsv("vip_users.csv");
+List<User> Users = LoadUsersFromCsv("vip_users1.csv");
 
 
 
@@ -40,10 +40,10 @@ static List<Event> LoadEventsFromCsv(string filePath)
 {
     List<Event> events = new List<Event>();
 
-    // Assuming your CSV has columns: Title, Description, StartTime, EndTime, Price
+    
     using (StreamReader reader = new StreamReader(filePath))
     {
-        reader.ReadLine(); // Skip the first line (header row)
+        reader.ReadLine(); 
 
         while (!reader.EndOfStream)
         {
@@ -57,7 +57,7 @@ static List<Event> LoadEventsFromCsv(string filePath)
                 Description = values[5],
                 StartTime = DateTime.Parse(values[2]),
                 EndTime = DateTime.Parse(values[3]),
-                Price = decimal.Parse(values[4])
+                Price = string.IsNullOrEmpty(values[4]) ? 0 : decimal.Parse(values[4])
             };
 
             events.Add(newEvent);
@@ -71,9 +71,10 @@ static List<User> LoadUsersFromCsv(string filePath)
 {
     List<User> Users = new List<User>();
 
-    // Assuming your CSV has columns: FirstName, LastName, DailyBudget
+    
     using (StreamReader reader = new StreamReader(filePath))
     {
+        reader.ReadLine(); 
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
@@ -99,13 +100,14 @@ static void InsertDataIntoDatabase(string connectionString, List<Event> events, 
     {
         connection.Open();
 
-        // Insert events into the Events table
+        
         foreach (Event e in events)
         {
             SqlCommand insertEventCommand = new SqlCommand(
-                "INSERT INTO Events (Title, Description, StartTime, EndTime, Price) " +
-                "VALUES (@Title, @Description, @StartTime, @EndTime, @Price)", connection);
+                "INSERT INTO Events (EventId, Title, Description, StartTime, EndTime, Price) " +
+                "VALUES (@EventId, @Title, @Description, @StartTime, @EndTime, @Price)", connection);
 
+            insertEventCommand.Parameters.AddWithValue("@EventId", e.EventId);
             insertEventCommand.Parameters.AddWithValue("@Title", e.Title);
             insertEventCommand.Parameters.AddWithValue("@Description", e.Description);
             insertEventCommand.Parameters.AddWithValue("@StartTime", e.StartTime);
@@ -115,7 +117,7 @@ static void InsertDataIntoDatabase(string connectionString, List<Event> events, 
             insertEventCommand.ExecuteNonQuery();
         }
 
-        // Insert VIP users into the VipUsers table
+        
         foreach (User user in Users)
         {
             SqlCommand insertUserCommand = new SqlCommand(
