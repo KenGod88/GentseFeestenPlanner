@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Domain.Repository
 {
-    internal class IEventRepository
+    internal interface IEventRepository
     {
     }
 }
