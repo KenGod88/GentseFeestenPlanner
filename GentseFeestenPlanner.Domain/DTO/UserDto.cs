@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Domain.DTO
 {
-    internal class UserDto
+    public class UserDTO
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public decimal DailyBudget { get; set; }
+
+        public int UserId { get; set; }
     }
 }
