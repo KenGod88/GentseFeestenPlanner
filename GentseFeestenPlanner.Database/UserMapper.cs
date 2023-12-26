@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace GentseFeestenPlanner.Database
 {
-    internal class UserMapper : IUserRepository
+    public class UserMapper : IUserRepository
     {
         private const string ConnectionString = "Data Source=Laptop_ken\\SQLEXPRESS;Initial Catalog=GentseFeesten;Integrated Security=True;Encrypt=False";
         private SqlConnection _connection;
