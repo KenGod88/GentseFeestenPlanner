@@ -17,7 +17,8 @@ namespace GentseFeestenPlanner.StartUp
         {
 
             IUserRepository userRepository = new UserMapper();
-            DomainManager domainManager = new DomainManager(userRepository);
+            IEventRepository eventRepository = new EventMapper();
+            DomainManager domainManager = new DomainManager(userRepository, eventRepository);
             GentseFeestenApplication gentseFeestenApplication = new GentseFeestenApplication(domainManager);
 
             
