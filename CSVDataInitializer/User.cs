@@ -11,5 +11,6 @@ namespace CSVDataInitializer
         public string FirstName { get; init; }
         public string LastName { get; init; }
         public decimal DailyBudget { get; init; }
+        
     }
 }

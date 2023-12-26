@@ -32,6 +32,9 @@ static void ClearDatabaseTables(string connectionString)
         SqlCommand deleteUsersCommand = new SqlCommand("DELETE FROM Users", connection);
         deleteUsersCommand.ExecuteNonQuery();
 
+        SqlCommand resetUserId = new SqlCommand("DBCC CHECKIDENT ('Users', RESEED, 0)", connection);
+        resetUserId.ExecuteNonQuery();
+
        
     }
 }
@@ -75,6 +78,7 @@ static List<User> LoadUsersFromCsv(string filePath)
     using (StreamReader reader = new StreamReader(filePath))
     {
         reader.ReadLine(); 
+        
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
@@ -82,12 +86,14 @@ static List<User> LoadUsersFromCsv(string filePath)
 
             User newUser = new User
             {
+                
                 FirstName = values[0],
                 LastName = values[1],
                 DailyBudget = decimal.Parse(values[2])
             };
 
             Users.Add(newUser);
+            
         }
     }
 
@@ -124,6 +130,7 @@ static void InsertDataIntoDatabase(string connectionString, List<Event> events, 
                 "INSERT INTO Users (FirstName, LastName, DailyBudget) " +
                 "VALUES (@FirstName, @LastName, @DailyBudget)", connection);
 
+            
             insertUserCommand.Parameters.AddWithValue("@FirstName", user.FirstName);
             insertUserCommand.Parameters.AddWithValue("@LastName", user.LastName);
             insertUserCommand.Parameters.AddWithValue("@DailyBudget", user.DailyBudget);
