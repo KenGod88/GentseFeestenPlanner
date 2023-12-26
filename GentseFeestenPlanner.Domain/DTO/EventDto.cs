@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Domain.DTO
 {
-    internal class EventDTO
+    public class EventDTO
     {
         public string Title { get; set; }
         public string Description { get; set; }

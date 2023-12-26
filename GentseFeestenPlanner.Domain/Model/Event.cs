@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Domain.Model
 {
-    internal class Event
+    public class Event
     {
         public int EventId { get; set; }
         public string Title { get; set; }

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Domain.DTO
 {
-    internal class DayPlanDTO
+    public class DayPlanDTO
     {
         public DateTime Date { get; set; }
-        public UserDto User { get; set; }
-        public List<EventDto> Events { get; set; }
+        public UserDTO User { get; set; }
+        public List<EventDTO> Events { get; set; }
         public decimal TotalCost { get; set; }
     }
 }
