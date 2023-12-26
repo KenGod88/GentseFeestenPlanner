@@ -31,7 +31,7 @@ namespace GentseFeestenPlanner.WPF
             OpenUserDetailWindow();
 
             UserDTO user = _domainManager.GetUserById(id);
-            List<string> UniqueDates = _domainManager.GetUniqueDates();
+            List<string> UniqueDates = _domainManager.GetUserDayPlanDates(id);
 
             _userDetailWindow.UserId = id;
             _userDetailWindow.FirstName = user.FirstName;

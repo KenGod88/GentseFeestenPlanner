@@ -14,6 +14,7 @@ namespace GentseFeestenPlanner.Domain.Model
             FirstName = firstName;
             LastName = lastName;
             DailyBudget = dailyBudget;
+            DayPlans = new List<DayPlan>();
         }
 
         public int UserId { get; set; }

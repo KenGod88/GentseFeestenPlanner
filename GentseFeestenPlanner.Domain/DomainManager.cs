@@ -30,14 +30,14 @@ namespace GentseFeestenPlanner.Domain
             return new UserDTO(user.UserId, user.FirstName, user.LastName, user.DailyBudget, user.DayPlans);
         }
 
-        public List<string> GetUniqueDates()
+        public List<string> GetUserDayPlanDates(int userId)
         {
             List<string> UniqueDates = new List<string>();
-            List<DateTime> dates = _eventRepository.GetUniqueDates();
+            List<DateTime> userDayPlanDates = _userRepository.GetUserDayPlanDates(userId);
 
-            dates = dates.OrderBy(d => d).ToList();
+            userDayPlanDates = userDayPlanDates.OrderBy(d => d).ToList();
 
-            foreach (DateTime date in dates)
+            foreach (DateTime date in userDayPlanDates)
             {
                 string formattedDate = date.ToString("dd/MM/yyyy");
                 UniqueDates.Add(formattedDate);
