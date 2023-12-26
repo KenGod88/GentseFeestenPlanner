@@ -22,6 +22,9 @@ namespace GentseFeestenPlanner.Domain.Model
         public List<DayPlan> DayPlans { get; set; }
         public decimal DailyBudget { get; set; }
 
+
+       
+
     }
 
 

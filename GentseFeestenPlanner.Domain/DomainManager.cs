@@ -13,9 +13,11 @@ namespace GentseFeestenPlanner.Domain
             _userRepository = userRepository;
         }
 
-        public Dictionary<int, string> GetUserNames()
+        public List<string> GetAllUsers()
         {
-            return _userRepository.GetAllUsers().ToDictionary(x => x.UserId, x => (x.FirstName + " " + x.LastName).ToString());
+            List<User> users = _userRepository.GetAllUsers();
+            List<string> usersList = users.Select(user => user.UserId + ": " + user.FirstName + " " + user.LastName).ToList();
+            return usersList;
             
         }
 
