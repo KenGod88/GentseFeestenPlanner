@@ -8,6 +8,12 @@ namespace GentseFeestenPlanner.Domain.Model
 {
     public class DayPlan
     {
+        public DayPlan(int dayPlanId, DateTime date, User user)
+        {
+            DayPlanId = dayPlanId;
+            Date = date;
+            User = user;
+        }
 
         public int DayPlanId { get; set; }
         public DateTime Date { get; set; }

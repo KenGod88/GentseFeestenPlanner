@@ -11,5 +11,6 @@ namespace GentseFeestenPlanner.Domain.Repository
     {
 
         List<User> GetAllUsers();
+        User GetUserById(int userId);
     }
 }

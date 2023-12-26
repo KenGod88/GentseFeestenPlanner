@@ -39,5 +39,56 @@ namespace GentseFeestenPlanner.Database
 
             return users;
         }
+
+        public User GetUserById(int userId)
+        {
+            User user = null;
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                // Retrieve user information
+                SqlCommand selectUserCommand = new SqlCommand("SELECT * FROM Users WHERE UserId = @userId", connection);
+                selectUserCommand.Parameters.AddWithValue("@userId", userId);
+
+                SqlDataReader userReader = selectUserCommand.ExecuteReader();
+
+                while (userReader.Read())
+                {
+                    int UserId = (int)userReader["UserId"];
+                    string FirstName = (string)userReader["FirstName"];
+                    string LastName = (string)userReader["LastName"];
+                    decimal DailyBudget = (decimal)userReader["DailyBudget"];
+
+                    user = new User(UserId, FirstName, LastName, DailyBudget);
+                }
+
+                userReader.Close();
+
+                if (user != null)
+                {
+                    // Retrieve day plans for the user
+                    SqlCommand selectDayPlansCommand = new SqlCommand("SELECT * FROM DayPlans WHERE UserId = @userId", connection);
+                    selectDayPlansCommand.Parameters.AddWithValue("@userId", userId);
+
+                    SqlDataReader dayPlansReader = selectDayPlansCommand.ExecuteReader();
+
+                    while (dayPlansReader.Read())
+                    {
+                        int dayPlanId = (int)dayPlansReader["DayPlanId"];
+                        DateTime date = (DateTime)dayPlansReader["Date"];
+
+                        // Create a DayPlan object and add it to the user's list of day plans
+                        DayPlan dayPlan = new DayPlan(dayPlanId,date, user);
+                        user.DayPlans.Add(dayPlan);
+                    }
+
+                    dayPlansReader.Close();
+                }
+            }
+
+            return user;
+        }
     }
 }
