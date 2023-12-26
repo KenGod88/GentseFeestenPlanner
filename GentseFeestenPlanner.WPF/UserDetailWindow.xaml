@@ -1,0 +1,29 @@
+﻿<Window x:Class="GentseFeestenPlanner.WPF.UserDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GentseFeestenPlanner.WPF"
+        mc:Ignorable="d"
+        Title="UserDetailWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            
+        </Grid.RowDefinitions>
+
+        <TextBlock Name="UserNameTitle" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" FontSize="30" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ListBox Name="GentseFeestenDates" Grid.Row="2" Grid.Column="0" Margin="10"/>
+        <Button Name="AddPlan" Grid.Row="1" Grid.Column="0" Content="Add Dayplan" Height="30" Width="100" HorizontalAlignment="Right" Margin="50" />
+        <Button Name="ShowPlan" Grid.Row="1" Grid.Column="0" Content="Show existing dayplan" Height="30" Width="150" HorizontalAlignment="Left" Margin="50" />
+        
+
+
+    </Grid>
+</Window>
