@@ -10,7 +10,7 @@ ClearDatabaseTables(connectionString);
 List<Event> events = LoadEventsFromCsv("gentse-feesten-evenementen-202324.csv");
 
 // Load VIP users from CSV
-List<User> Users = LoadUsersFromCsv("vip_users1.csv");
+List<User> Users = LoadUsersFromCsv("vip_users.csv");
 
 
 
@@ -82,7 +82,7 @@ static List<User> LoadUsersFromCsv(string filePath)
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
-            var values = line.Split(';');
+            var values = line.Split(',');
 
             User newUser = new User
             {
