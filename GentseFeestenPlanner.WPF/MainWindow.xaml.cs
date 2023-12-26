@@ -19,6 +19,11 @@ namespace GentseFeestenPlanner.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        public List<string> Users { set
+            {
+                UserListBox.ItemsSource = value;
+            } }
         public MainWindow()
         {
             InitializeComponent();
