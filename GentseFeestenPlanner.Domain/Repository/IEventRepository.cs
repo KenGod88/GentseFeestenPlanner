@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GentseFeestenPlanner.Domain.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Domain.Repository
 {
-    internal interface IEventRepository
+    public interface IEventRepository
     {
+        List<Event> GetAllEventsByDate(DateTime date);
+
+        List<DateTime> GetUniqueDates();
     }
 }
