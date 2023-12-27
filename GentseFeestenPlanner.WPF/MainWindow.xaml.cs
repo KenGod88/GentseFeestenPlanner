@@ -23,6 +23,7 @@ namespace GentseFeestenPlanner.WPF
     {
         private Dictionary<int, string> _users;
         public event EventHandler<int> UserSelected;
+        
 
         public Dictionary<int, string> Users {
             get => _users;

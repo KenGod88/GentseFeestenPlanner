@@ -136,7 +136,7 @@ namespace GentseFeestenPlanner.Database
                 {
                     Guid eventId = (Guid)eventsReader["EventId"];
 
-                    // Convert the GUID to a string if necessary
+                    
                     string eventIdString = eventId.ToString();
                     string title = (string)eventsReader["Title"];
                     string description = (string)eventsReader["Description"];
