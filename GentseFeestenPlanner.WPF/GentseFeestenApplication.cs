@@ -15,6 +15,7 @@ namespace GentseFeestenPlanner.WPF
         private DomainManager _domainManager;
         private UserDetailWindow _userDetailWindow;
         private EventDetailWindow _eventDetailWindow;
+        private AddDayPlanWindow _addDayPlanWindow;
 
         public GentseFeestenApplication(DomainManager domainManager)
         {
@@ -50,8 +51,28 @@ namespace GentseFeestenPlanner.WPF
             _userDetailWindow = new UserDetailWindow();
             _userDetailWindow.DayPlanSelected += _userDetailWindow_DayPlanSelected;
             _userDetailWindow.EventSelected += _userDetailWindow_EventSelected;
+            _userDetailWindow.AddDayPlan += _userDetailWindow_AddDayPlan;
             _userDetailWindow.Closing += _userDetailWindow_Closing;
             _userDetailWindow.Show();
+        }
+
+        private void _userDetailWindow_AddDayPlan(object? sender, EventArgs e)
+        {
+            OpenAddDayPlanWindow();
+        }
+
+        private void OpenAddDayPlanWindow()
+        {
+            _userDetailWindow.Hide();
+            _addDayPlanWindow = new AddDayPlanWindow();
+            _addDayPlanWindow.Closing += _addDayPlanWindow_Closing;
+            _addDayPlanWindow.Show();
+        }
+
+        private void _addDayPlanWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            _userDetailWindow.Show();
+            
         }
 
         private void _userDetailWindow_EventSelected(object? sender, EventDTO e)
