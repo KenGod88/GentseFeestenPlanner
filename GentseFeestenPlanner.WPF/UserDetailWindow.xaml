@@ -9,20 +9,22 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             
         </Grid.RowDefinitions>
 
         <TextBlock Name="UserNameTitle" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" FontSize="30" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <ListBox Name="GentseFeestenDates" Grid.Row="2" Grid.Column="0" Margin="10"/>
-        <Button Name="AddPlan" Grid.Row="1" Grid.Column="0" Content="Add Dayplan" Height="30" Width="100" HorizontalAlignment="Right" Margin="50" />
-        <Button Name="ShowPlan" Grid.Row="1" Grid.Column="0" Content="Show existing dayplan" Height="30" Width="150" HorizontalAlignment="Left" Margin="50" />
-        
+        <ListBox Name="ExistingPlansListBox" Grid.Row="2" Grid.Column="0" Margin="10" MouseDoubleClick="ExistingPlansListBox_MouseDoubleClick"/>
+        <TextBlock Name="ExistingPlansTitle" Text="Existing Plans"  Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+        <Button Name="AddPlan" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Add Dayplan" Height="30" Width="100" HorizontalAlignment="center" Margin="50" />
+        <ListBox Name="DayPlanDetailsListBox" Grid.Row="2" Grid.Column="1" Margin="10"/>
+        <TextBlock Name="DayPlanDetailsTitle" Text="DayPlan Details" Grid.Row="1" Grid.Column="1" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+
 
 
     </Grid>

@@ -31,7 +31,9 @@ namespace GentseFeestenPlanner.WPF
             OpenUserDetailWindow();
 
             UserDTO user = _domainManager.GetUserById(id);
-            List<string> UniqueDates = _domainManager.GetUserDayPlanDates(id);
+            List<string> DayPlanDates = _domainManager.GetUserDayPlanDates(id);
+            
+           
 
             _userDetailWindow.UserId = id;
             _userDetailWindow.FirstName = user.FirstName;
@@ -39,7 +41,9 @@ namespace GentseFeestenPlanner.WPF
             _userDetailWindow.DailyBudget = user.DailyBudget;
             _userDetailWindow.DayPlans = user.DayPlans;
             _userDetailWindow.FullName = user.FirstName + " " + user.LastName;
-            _userDetailWindow.UniqueDates = UniqueDates;
+            _userDetailWindow.DayPlanDates = DayPlanDates;
+            
+            
         }
 
         private void OpenUserDetailWindow()
@@ -47,15 +51,25 @@ namespace GentseFeestenPlanner.WPF
             _mainWindow.Hide();
 
             _userDetailWindow = new UserDetailWindow();
+            _userDetailWindow.DayPlanSelected += _userDetailWindow_DayPlanSelected;
             _userDetailWindow.Closing += _userDetailWindow_Closing;
             _userDetailWindow.Show();
             
+        }
+
+        private void _userDetailWindow_DayPlanSelected(object? sender, DateTime e)
+        {
+            List<EventDTO> events = _domainManager.GetEventsForUserDayplan(_userDetailWindow.UserId, e);
+            
+            _userDetailWindow.Events = events;
         }
 
         private void _userDetailWindow_Closing(object? sender, CancelEventArgs e)
         {
             _mainWindow.Show();
         }
+
+        
 
 
     }

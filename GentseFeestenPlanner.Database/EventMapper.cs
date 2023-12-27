@@ -1,11 +1,6 @@
 ﻿using GentseFeestenPlanner.Domain.Model;
 using GentseFeestenPlanner.Domain.Repository;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GentseFeestenPlanner.Database
 {
@@ -40,36 +35,50 @@ namespace GentseFeestenPlanner.Database
                     DateTime StartTime = (DateTime)reader["StartTime"];
                     DateTime EndTime = (DateTime)reader["EndTime"];
                     decimal Price = (decimal)reader["Price"];
-                    
 
-                    events.Add(new Event(EventId, Title, Description,StartTime, EndTime, Price));
+                    events.Add(new Event(EventId, Title, Description, StartTime, EndTime, Price));
                 }
             }
 
             return events;
         }
 
-        public List<DateTime> GetUniqueDates()
+        public List<Event> GetEventsForUserDayPlan(int userId, DateTime dayplanDate)
         {
-            List<DateTime> dates = new List<DateTime>();
+            List<Event> events = new List<Event>();
+
+            string query = @"
+                            SELECT e.* FROM Events e
+                            INNER JOIN DayPlanEvents dpe ON e.EventId = dpe.EventId
+                            INNER JOIN DayPlans dp ON dp.DayPlanId = dpe.DayPlanId
+                            WHERE dp.UserId = @UserId AND dp.Date = @DayplanDate";
 
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
+                SqlCommand selectEventsCommand = new SqlCommand(query, connection);
+                selectEventsCommand.Parameters.AddWithValue("@UserId", userId);
+                selectEventsCommand.Parameters.AddWithValue("@DayplanDate", dayplanDate.Date); // Ensure only the date part is considered
 
-                SqlCommand selectDatesCommand = new SqlCommand("SELECT DISTINCT CONVERT(DATE, StartTime) AS EventDate FROM Events", connection);
-
-                SqlDataReader reader = selectDatesCommand.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlDataReader reader = selectEventsCommand.ExecuteReader())
                 {
-                    DateTime date = (DateTime)reader["EventDate"];
+                    while (reader.Read())
+                    {
+                        Guid eventId = (Guid)reader["EventId"];
+                        string eventIdString = eventId.ToString();
+                        string title = (string)reader["Title"];
+                        string description = (string)reader["Description"];
+                        DateTime startTime = (DateTime)reader["StartTime"];
+                        DateTime endTime = (DateTime)reader["EndTime"];
+                        decimal price = (decimal)reader["Price"];
 
-                    dates.Add(date);
+                        // Assuming Event constructor matches these parameters
+                        events.Add(new Event(eventIdString, title, description, startTime, endTime, price));
+                    }
                 }
             }
 
-            return dates;
+            return events;
         }
     }
 }

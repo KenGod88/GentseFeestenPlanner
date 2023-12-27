@@ -47,6 +47,22 @@ namespace GentseFeestenPlanner.Domain
             return UniqueDates;
         }
 
+        public List<EventDTO> GetEventsForUserDayplan(int userId, DateTime dayplanDate)
+        {
+            // Assuming the updated repository method now accepts a DateTime parameter to filter events.
+            List<Event> events = _eventRepository.GetEventsForUserDayPlan(userId, dayplanDate);
+
+            List<EventDTO> eventDTOs = new List<EventDTO>();
+
+            foreach (Event e in events)
+            {
+                // Create and add the EventDTO to the list
+                eventDTOs.Add(new EventDTO(e.EventId, e.Title, e.Price, e.StartTime, e.EndTime, e.Description));
+            }
+
+            return eventDTOs;
+        }
+
 
 
     }
