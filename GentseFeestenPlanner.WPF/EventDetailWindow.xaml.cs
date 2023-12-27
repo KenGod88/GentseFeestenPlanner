@@ -19,6 +19,15 @@ namespace GentseFeestenPlanner.WPF
     /// </summary>
     public partial class EventDetailWindow : Window
     {
+
+        public string EventTitle { get => EventTitleTextBlock.Text; set => EventTitleTextBlock.Text = value ; }
+        public string EventDescription { get => EventDescriptionTextBlock.Text; set => EventDescriptionTextBlock.Text = value; }
+        public DateTime EventStartTime { get; set; }
+        public DateTime EventEndTime { get; set; }
+        public string EventTimeSpan { get => EventTimeTextBlock.Text; set => EventTimeTextBlock.Text = value; }
+        public string EventPrice { get => EventPriceTextBlock.Text; set => EventPriceTextBlock.Text = value; }
+        public string EventId { get; set; }
+
         public EventDetailWindow()
         {
             InitializeComponent();

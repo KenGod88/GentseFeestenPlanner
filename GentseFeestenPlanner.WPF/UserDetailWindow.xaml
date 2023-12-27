@@ -22,7 +22,7 @@
         <ListBox Name="ExistingPlansListBox" Grid.Row="2" Grid.Column="0" Margin="10" MouseDoubleClick="ExistingPlansListBox_MouseDoubleClick"/>
         <TextBlock Name="ExistingPlansTitle" Text="Existing Plans"  Grid.Row="1" Grid.Column="0" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
         <Button Name="AddPlan" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Add Dayplan" Height="30" Width="100" HorizontalAlignment="center" Margin="50" />
-        <ListBox Name="DayPlanDetailsListBox" Grid.Row="2" Grid.Column="1" Margin="10"/>
+        <ListBox Name="DayPlanDetailsListBox" Grid.Row="2" Grid.Column="1" Margin="10" MouseDoubleClick="DayPlanDetailsListBox_MouseDoubleClick"/>
         <TextBlock Name="DayPlanDetailsTitle" Text="DayPlan Details" Grid.Row="1" Grid.Column="1" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 
 

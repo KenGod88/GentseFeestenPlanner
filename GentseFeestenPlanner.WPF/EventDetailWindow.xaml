@@ -6,7 +6,36 @@
         xmlns:local="clr-namespace:GentseFeestenPlanner.WPF"
         mc:Ignorable="d"
         Title="EventDetailWindow" Height="450" Width="800">
-    <Grid>
-        
+
+
+    <Window.Resources>
+      
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#f0f0f0">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+            <Label Content="Title" Style="{StaticResource LabelStyle}"/>
+            <TextBlock Name="EventTitleTextBlock" Style="{StaticResource TextBlockStyle}"/>
+
+            <Label Content="Time" Style="{StaticResource LabelStyle}"/>
+            <TextBlock Name="EventTimeTextBlock" Style="{StaticResource TextBlockStyle}"/>
+
+            <Label Content="Price" Style="{StaticResource LabelStyle}"/>
+            <TextBlock Name="EventPriceTextBlock" Style="{StaticResource TextBlockStyle}"/>
+
+            <Label Content="Description" Style="{StaticResource LabelStyle}"/>
+            <TextBlock Name="EventDescriptionTextBlock" Style="{StaticResource TextBlockStyle}"/>
+        </StackPanel>
     </Grid>
 </Window>

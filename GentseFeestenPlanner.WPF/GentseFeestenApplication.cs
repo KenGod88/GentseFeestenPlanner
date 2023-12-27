@@ -14,6 +14,7 @@ namespace GentseFeestenPlanner.WPF
         private MainWindow _mainWindow;
         private DomainManager _domainManager;
         private UserDetailWindow _userDetailWindow;
+        private EventDetailWindow _eventDetailWindow;
 
         public GentseFeestenApplication(DomainManager domainManager)
         {
@@ -32,8 +33,6 @@ namespace GentseFeestenPlanner.WPF
 
             UserDTO user = _domainManager.GetUserById(id);
             List<string> DayPlanDates = _domainManager.GetUserDayPlanDates(id);
-            
-           
 
             _userDetailWindow.UserId = id;
             _userDetailWindow.FirstName = user.FirstName;
@@ -42,8 +41,6 @@ namespace GentseFeestenPlanner.WPF
             _userDetailWindow.DayPlans = user.DayPlans;
             _userDetailWindow.FullName = user.FirstName + " " + user.LastName;
             _userDetailWindow.DayPlanDates = DayPlanDates;
-            
-            
         }
 
         private void OpenUserDetailWindow()
@@ -52,15 +49,39 @@ namespace GentseFeestenPlanner.WPF
 
             _userDetailWindow = new UserDetailWindow();
             _userDetailWindow.DayPlanSelected += _userDetailWindow_DayPlanSelected;
+            _userDetailWindow.EventSelected += _userDetailWindow_EventSelected;
             _userDetailWindow.Closing += _userDetailWindow_Closing;
             _userDetailWindow.Show();
-            
+        }
+
+        private void _userDetailWindow_EventSelected(object? sender, EventDTO e)
+        {
+            OpenEventDetailWindow();
+
+            _eventDetailWindow.EventTitle = e.Title;
+            _eventDetailWindow.EventDescription = e.Description;
+            _eventDetailWindow.EventTimeSpan = e.StartTime.ToShortTimeString() + " - " + e.EndTime.ToShortTimeString();
+            _eventDetailWindow.EventPrice = e.Price.ToString() + " Euro";
+            _eventDetailWindow.EventId = e.EventId;
+        }
+
+        private void OpenEventDetailWindow()
+        {
+            _userDetailWindow.Hide();
+            _eventDetailWindow = new EventDetailWindow();
+            _eventDetailWindow.Closing += _eventDetailWindow_Closing;
+            _eventDetailWindow.Show();
+        }
+
+        private void _eventDetailWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            _userDetailWindow.Show();
         }
 
         private void _userDetailWindow_DayPlanSelected(object? sender, DateTime e)
         {
             List<EventDTO> events = _domainManager.GetEventsForUserDayplan(_userDetailWindow.UserId, e);
-            
+
             _userDetailWindow.Events = events;
         }
 
@@ -68,9 +89,5 @@ namespace GentseFeestenPlanner.WPF
         {
             _mainWindow.Show();
         }
-
-        
-
-
     }
 }

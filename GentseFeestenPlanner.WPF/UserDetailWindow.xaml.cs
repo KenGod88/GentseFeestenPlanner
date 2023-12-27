@@ -27,6 +27,7 @@ namespace GentseFeestenPlanner.WPF
         private List<EventDTO> _events;
         public List<EventDTO> Events { get => _events ; set => DayPlanDetailsListBox.ItemsSource = value; }
         public event EventHandler<DateTime> DayPlanSelected;
+        public event EventHandler<EventDTO> EventSelected;
 
         //User properties
         public int UserId { get; set; }
@@ -60,6 +61,17 @@ namespace GentseFeestenPlanner.WPF
 
         }
 
-        
+        private void DayPlanDetailsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DayPlanDetailsListBox.SelectedItem is EventDTO selectedEvent)
+            {
+                EventSelected?.Invoke(this, selectedEvent);
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid event.", "No Event Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+        }
     }
 }
