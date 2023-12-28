@@ -12,5 +12,8 @@ namespace GentseFeestenPlanner.Domain.Repository
         List<Event> GetAllEventsByDate(DateTime date);
 
         List<Event> GetEventsForUserDayPlan(int userId, DateTime dayplanDate);
+
+        List<DateTime> GetDatesWithNoDayplan(int userId);
+        Event GetEventById(string eventId);
     }
 }
