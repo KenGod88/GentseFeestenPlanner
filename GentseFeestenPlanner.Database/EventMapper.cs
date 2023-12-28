@@ -22,16 +22,19 @@ namespace GentseFeestenPlanner.Database
             {
                 connection.Open();
 
-                SqlCommand selectEventsCommand = new SqlCommand("SELECT * FROM Events WHERE Date = @date", connection);
-                selectEventsCommand.Parameters.AddWithValue("@date", date);
+               
+                string query = "SELECT * FROM Events WHERE CAST(StartTime AS DATE) = @date";
+
+                SqlCommand selectEventsCommand = new SqlCommand(query, connection);
+                selectEventsCommand.Parameters.AddWithValue("@date", date.Date);  
 
                 SqlDataReader reader = selectEventsCommand.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    string EventId = (string)reader["EventId"];
-                    string Title = (string)reader["Title"];
-                    string Description = (string)reader["Description"];
+                    string EventId = reader["EventId"].ToString();
+                    string Title = reader["Title"].ToString();
+                    string Description = reader["Description"].ToString();
                     DateTime StartTime = (DateTime)reader["StartTime"];
                     DateTime EndTime = (DateTime)reader["EndTime"];
                     decimal Price = (decimal)reader["Price"];
@@ -79,6 +82,68 @@ namespace GentseFeestenPlanner.Database
             }
 
             return events;
+        }
+
+        public List<DateTime> GetDatesWithNoDayplan(int userId)
+        {
+            List<DateTime> datesWithNoDayplan = new List<DateTime>();
+
+            string query = @"
+                    SELECT DISTINCT CAST(e.StartTime AS DATE) AS EventDate FROM Events e
+                    WHERE CAST(e.StartTime AS DATE) NOT IN (
+                        SELECT dp.Date FROM DayPlans dp
+                        WHERE dp.UserId = @UserId
+                    )";
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                SqlCommand selectEventsCommand = new SqlCommand(query, connection);
+                selectEventsCommand.Parameters.AddWithValue("@UserId", userId);
+
+                using (SqlDataReader reader = selectEventsCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        DateTime date = (DateTime)reader["EventDate"];
+                        datesWithNoDayplan.Add(date);
+                    }
+                }
+            }
+
+            return datesWithNoDayplan;
+        }
+
+        public Event GetEventById(string eventId)
+        {
+            Event eventToReturn = null;
+
+            string query = "SELECT * FROM Events WHERE EventId = @eventId";
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                SqlCommand selectEventsCommand = new SqlCommand(query, connection);
+                selectEventsCommand.Parameters.AddWithValue("@eventId", eventId);
+
+                using (SqlDataReader reader = selectEventsCommand.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        string EventId = (string)reader["EventId"];
+                        string Title = (string)reader["Title"];
+                        string Description = (string)reader["Description"];
+                        DateTime StartTime = (DateTime)reader["StartTime"];
+                        DateTime EndTime = (DateTime)reader["EndTime"];
+                        decimal Price = (decimal)reader["Price"];
+
+                        eventToReturn = new Event(EventId, Title, Description, StartTime, EndTime, Price);
+                    }
+                }
+            }
+
+            return eventToReturn;
+            
         }
     }
 }

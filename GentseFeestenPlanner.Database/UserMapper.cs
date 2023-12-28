@@ -14,6 +14,15 @@ namespace GentseFeestenPlanner.Database
             _connection = new SqlConnection(ConnectionString);
         }
 
+        //public SqlTransaction BeginTransaction()
+        //{
+        //    if(_connection.State != System.Data.ConnectionState.Open)
+        //    {
+        //        _connection.Open();
+        //    }
+        //    return _connection.BeginTransaction();
+        //}
+
         public List<User> GetAllUsers()
         {
             List<User> users = new List<User>();
@@ -82,7 +91,7 @@ namespace GentseFeestenPlanner.Database
             return user;
         }
 
-        private List<DayPlan> GetDayPlansForUser(int userId, User user)
+        public List<DayPlan> GetDayPlansForUser(int userId, User user)
         {
             List<DayPlan> dayPlans = new List<DayPlan>();
 
@@ -102,7 +111,7 @@ namespace GentseFeestenPlanner.Database
                     DateTime date = (DateTime)dayPlansReader["Date"];
 
                     // Create a DayPlan object and add it to the user's list of day plans
-                    DayPlan dayPlan = new DayPlan(dayPlanId, date, user);
+                    DayPlan dayPlan = new DayPlan(date, user);
                     dayPlans.Add(dayPlan);
                 }
 
@@ -178,6 +187,45 @@ namespace GentseFeestenPlanner.Database
             }
 
             return dates;   
+            
+        }
+
+        public void AddEventToDayPlan(int userId, DateTime dayplanDate, string eventId)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                // Retrieve the day plan id for the given user and date
+                SqlCommand selectDayPlanIdCommand = new SqlCommand("SELECT DayPlanId FROM DayPlans WHERE UserId = @userId AND Date = @date", connection);
+                selectDayPlanIdCommand.Parameters.AddWithValue("@userId", userId);
+                selectDayPlanIdCommand.Parameters.AddWithValue("@date", dayplanDate.Date);
+
+                int dayPlanId = (int)selectDayPlanIdCommand.ExecuteScalar();
+
+                // Add the event to the day plan
+                SqlCommand insertEventCommand = new SqlCommand("INSERT INTO DayPlanEvents (DayPlanId, EventId) VALUES (@dayPlanId, @eventId)", connection);
+                insertEventCommand.Parameters.AddWithValue("@dayPlanId", dayPlanId);
+                insertEventCommand.Parameters.AddWithValue("@eventId", eventId);
+
+                insertEventCommand.ExecuteNonQuery();
+            }
+           
+            
+        }
+
+        public void AddDayPlan(DayPlan dayPlan)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand insertDayPlanCommand = new SqlCommand("INSERT INTO DayPlans (Date, UserId) VALUES (@date, @userId)", connection);
+                insertDayPlanCommand.Parameters.AddWithValue("@date", dayPlan.Date.Date);
+                insertDayPlanCommand.Parameters.AddWithValue("@userId", dayPlan.User.UserId);
+
+                insertDayPlanCommand.ExecuteNonQuery();
+            }
             
         }
     }
