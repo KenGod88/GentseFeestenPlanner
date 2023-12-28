@@ -21,17 +21,20 @@ namespace GentseFeestenPlanner.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Dictionary<int, string> _users;
         public event EventHandler<int> UserSelected;
-        
 
-        public Dictionary<int, string> Users {
+        private Dictionary<int, string> _users;
+
+        public Dictionary<int, string> Users
+        {
             get => _users;
             set
             {
                 _users = value;
                 UserListBox.ItemsSource = value.Values;
-            } }
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -39,9 +42,7 @@ namespace GentseFeestenPlanner.WPF
 
         private void UserListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            
             UserSelected?.Invoke(this, GetSelectedUserId());
-
         }
 
         private int GetSelectedUserId()
@@ -52,9 +53,8 @@ namespace GentseFeestenPlanner.WPF
             }
             else
             {
-
-                MessageBox.Show("Please select a user.", "No User Selected", MessageBoxButton.OK, MessageBoxImage.Information); 
-                return -1; 
+                MessageBox.Show("Please select a user.", "No User Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                return -1;
             }
         }
     }
