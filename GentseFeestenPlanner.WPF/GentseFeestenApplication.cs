@@ -1,5 +1,6 @@
 ﻿using GentseFeestenPlanner.Domain;
 using GentseFeestenPlanner.Domain.DTO;
+using GentseFeestenPlanner.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,6 +60,39 @@ namespace GentseFeestenPlanner.WPF
         private void _userDetailWindow_AddDayPlan(object? sender, EventArgs e)
         {
             OpenAddDayPlanWindow();
+
+            List<string> DatesWithNoDayPlan = _domainManager.GetDatesWithNoDayplan(_userDetailWindow.UserId);
+            _addDayPlanWindow.DatesWithNoDayPlan = DatesWithNoDayPlan;
+            _addDayPlanWindow.DateSelected += _addDayPlanWindow_DateSelected;
+            
+        }
+
+      
+
+        private void _addDayPlanWindow_DateSelected(object? sender, string e)
+        {
+            List<string> EventsOnDate = _domainManager.GetEventsOnDate(e);
+
+            _addDayPlanWindow.EventsOnDate = EventsOnDate;
+            _addDayPlanWindow.SaveDayPlan += _addDayPlanWindow_SaveDayPlan;
+            
+        }
+
+        private void _addDayPlanWindow_SaveDayPlan(object? sender, EventArgs e)
+        {
+            List<string> AddedEvents = _addDayPlanWindow.AddedEvents;
+            string date = _addDayPlanWindow.DropDownDateSelection.SelectedItem.ToString();
+            List<EventDTO> events = new List<EventDTO>();
+            foreach (string s in AddedEvents)
+            {
+                string id = s.Split(' ')[0];
+                events.Add(_domainManager.GetEventById(id));
+
+                
+            }
+
+            _domainManager.MakeDayPlan(_userDetailWindow.UserId, date, events);
+            
         }
 
         private void OpenAddDayPlanWindow()
