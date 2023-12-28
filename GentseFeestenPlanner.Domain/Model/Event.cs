@@ -24,5 +24,10 @@ namespace GentseFeestenPlanner.Domain.Model
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public decimal Price { get; set; }
+
+        public override string ToString()
+        {
+            return $"{StartTime.ToShortTimeString()} to {EndTime.ToShortTimeString()} - {Title}  - € {Price}";
+        }
     }
 }
