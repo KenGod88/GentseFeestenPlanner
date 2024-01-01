@@ -57,10 +57,20 @@ namespace GentseFeestenPlanner.WPF
             EventDTO selectedEvent = ShowEventsListBox.SelectedItem as EventDTO;
             if (selectedEvent != null)
             {
-                AddEventToDayPlan?.Invoke(this, selectedEvent);
-                AddedEvents.Add(selectedEvent);
-                AddedEventsListBox.Items.Refresh();
-                
+                try
+                {
+                    // Attempt to add the event to the day plan.
+                    AddEventToDayPlan?.Invoke(this, selectedEvent);
+
+                    // If no exception is thrown, add the event to the AddedEvents list.
+                    AddedEvents.Add(selectedEvent);
+                    AddedEventsListBox.Items.Refresh();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    // Show a message box if the event cannot be added due to overlapping.
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

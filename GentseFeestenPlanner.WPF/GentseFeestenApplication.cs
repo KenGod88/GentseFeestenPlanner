@@ -88,7 +88,8 @@ namespace GentseFeestenPlanner.WPF
                 _domainManager.AddEventToDayPlan(_userDetailWindow.UserId, e); 
             }catch(InvalidOperationException ex)
             {
-                MessageBox.Show(ex.Message);
+              
+                throw;
             }
             
             
