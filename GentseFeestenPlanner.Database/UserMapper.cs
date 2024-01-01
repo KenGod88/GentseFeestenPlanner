@@ -14,14 +14,7 @@ namespace GentseFeestenPlanner.Database
             _connection = new SqlConnection(ConnectionString);
         }
 
-        //public SqlTransaction BeginTransaction()
-        //{
-        //    if(_connection.State != System.Data.ConnectionState.Open)
-        //    {
-        //        _connection.Open();
-        //    }
-        //    return _connection.BeginTransaction();
-        //}
+        
 
         public List<User> GetAllUsers()
         {
@@ -226,6 +219,33 @@ namespace GentseFeestenPlanner.Database
 
                 insertDayPlanCommand.ExecuteNonQuery();
             }
+            
+        }
+
+        public DayPlan GetDayPlanForUserOnDate(int userId, DateTime date)
+        {
+            DayPlan dayPlan = null;
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand selectDayPlanCommand = new SqlCommand("SELECT * FROM DayPlans WHERE UserId = @userId AND Date = @date", connection);
+                selectDayPlanCommand.Parameters.AddWithValue("@userId", userId);
+                selectDayPlanCommand.Parameters.AddWithValue("@date", date.Date);
+
+                SqlDataReader reader = selectDayPlanCommand.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int dayPlanId = (int)reader["DayPlanId"];
+
+                    dayPlan = new DayPlan(date, GetUserById(userId));
+                    dayPlan.DayPlanId = dayPlanId;
+                }
+            }
+
+            return dayPlan;
             
         }
     }
