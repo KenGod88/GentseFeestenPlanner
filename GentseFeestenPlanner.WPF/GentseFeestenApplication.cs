@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GentseFeestenPlanner.WPF.AddDayPlanWindow;
+using System.Windows;
 
 namespace GentseFeestenPlanner.WPF
 {
@@ -17,6 +19,7 @@ namespace GentseFeestenPlanner.WPF
         private UserDetailWindow _userDetailWindow;
         private EventDetailWindow _eventDetailWindow;
         private AddDayPlanWindow _addDayPlanWindow;
+        private Window _lastOpenWindow;
 
         public GentseFeestenApplication(DomainManager domainManager)
         {
@@ -33,16 +36,7 @@ namespace GentseFeestenPlanner.WPF
         {
             OpenUserDetailWindow();
 
-            UserDTO user = _domainManager.GetUserById(id);
-            List<string> DayPlanDates = _domainManager.GetUserDayPlanDates(id);
-
-            _userDetailWindow.UserId = id;
-            _userDetailWindow.FirstName = user.FirstName;
-            _userDetailWindow.LastName = user.LastName;
-            _userDetailWindow.DailyBudget = user.DailyBudget;
-            _userDetailWindow.DayPlans = user.DayPlans;
-            _userDetailWindow.FullName = user.FirstName + " " + user.LastName;
-            _userDetailWindow.DayPlanDates = DayPlanDates;
+            UpdateUserDetailWindow(id);
         }
 
         private void OpenUserDetailWindow()
@@ -64,35 +58,56 @@ namespace GentseFeestenPlanner.WPF
             List<string> DatesWithNoDayPlan = _domainManager.GetDatesWithNoDayplan(_userDetailWindow.UserId);
             _addDayPlanWindow.DatesWithNoDayPlan = DatesWithNoDayPlan;
             _addDayPlanWindow.DateSelected += _addDayPlanWindow_DateSelected;
-            
+            _addDayPlanWindow.EventSelected += _addDayPlanWindow_EventSelected;
         }
 
-      
+        private void _addDayPlanWindow_EventSelected(object? sender, EventDTO e)
+        {
+            OpenEventDetailWindow();
+
+            _eventDetailWindow.EventTitle = e.Title;
+            _eventDetailWindow.EventDescription = e.Description;
+            _eventDetailWindow.EventTimeSpan = e.StartTime.ToShortTimeString() + " - " + e.EndTime.ToShortTimeString();
+            _eventDetailWindow.EventPrice = e.Price.ToString() + " Euro";
+            _eventDetailWindow.EventId = e.EventId;
+        }
 
         private void _addDayPlanWindow_DateSelected(object? sender, string e)
         {
-            List<string> EventsOnDate = _domainManager.GetEventsOnDate(e);
+            List<EventDTO> EventsOnDate = _domainManager.GetEventsOnDateAsEventDTO(e);
 
             _addDayPlanWindow.EventsOnDate = EventsOnDate;
             _addDayPlanWindow.SaveDayPlan += _addDayPlanWindow_SaveDayPlan;
+            _addDayPlanWindow.AddEventToDayPlan += _addDayPlanWindow_AddEventToDayPlan;
+        }
+
+        private void _addDayPlanWindow_AddEventToDayPlan(object? sender, EventDTO e)
+        {
+            try 
+            {
+                _domainManager.AddEventToDayPlan(_userDetailWindow.UserId, e); 
+            }catch(InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
             
         }
 
         private void _addDayPlanWindow_SaveDayPlan(object? sender, EventArgs e)
         {
-            List<string> AddedEvents = _addDayPlanWindow.AddedEvents;
             string date = _addDayPlanWindow.DropDownDateSelection.SelectedItem.ToString();
-            List<EventDTO> events = new List<EventDTO>();
-            foreach (string s in AddedEvents)
+
+            if (e is EventsArgs customArgs)
             {
-                string id = s.Split(' ')[0];
-                events.Add(_domainManager.GetEventById(id));
+                List<EventDTO> events = customArgs.Events;
 
-                
+                _domainManager.MakeDayPlan(_userDetailWindow.UserId, date, events);
             }
-
-            _domainManager.MakeDayPlan(_userDetailWindow.UserId, date, events);
-            
+            else
+            {
+                MessageBox.Show("Invalid event data provided.");
+            }
         }
 
         private void OpenAddDayPlanWindow()
@@ -105,8 +120,10 @@ namespace GentseFeestenPlanner.WPF
 
         private void _addDayPlanWindow_Closing(object? sender, CancelEventArgs e)
         {
+            // Fetch updated details for the user
+            UpdateUserDetailWindow(_userDetailWindow.UserId);
+
             _userDetailWindow.Show();
-            
         }
 
         private void _userDetailWindow_EventSelected(object? sender, EventDTO e)
@@ -122,6 +139,8 @@ namespace GentseFeestenPlanner.WPF
 
         private void OpenEventDetailWindow()
         {
+
+            _lastOpenWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
             _userDetailWindow.Hide();
             _eventDetailWindow = new EventDetailWindow();
             _eventDetailWindow.Closing += _eventDetailWindow_Closing;
@@ -130,7 +149,7 @@ namespace GentseFeestenPlanner.WPF
 
         private void _eventDetailWindow_Closing(object? sender, CancelEventArgs e)
         {
-            _userDetailWindow.Show();
+            _lastOpenWindow?.Show();
         }
 
         private void _userDetailWindow_DayPlanSelected(object? sender, DateTime e)
@@ -143,6 +162,20 @@ namespace GentseFeestenPlanner.WPF
         private void _userDetailWindow_Closing(object? sender, CancelEventArgs e)
         {
             _mainWindow.Show();
+        }
+
+        private void UpdateUserDetailWindow(int userId)
+        {
+            UserDTO user = _domainManager.GetUserById(userId);
+            List<string> DayPlanDates = _domainManager.GetUserDayPlanDates(userId);
+
+            _userDetailWindow.UserId = userId;
+            _userDetailWindow.FirstName = user.FirstName;
+            _userDetailWindow.LastName = user.LastName;
+            _userDetailWindow.DailyBudget = user.DailyBudget;
+            _userDetailWindow.DayPlans = user.DayPlans;
+            _userDetailWindow.FullName = user.FirstName + " " + user.LastName;
+            _userDetailWindow.DayPlanDates = DayPlanDates;
         }
     }
 }

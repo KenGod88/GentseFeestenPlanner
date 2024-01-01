@@ -1,4 +1,5 @@
-﻿using GentseFeestenPlanner.Domain.Model;
+﻿using GentseFeestenPlanner.Domain.DTO;
+using GentseFeestenPlanner.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,16 +25,22 @@ namespace GentseFeestenPlanner.WPF
 
         public event EventHandler<EventArgs> SaveDayPlan;
 
+        public event EventHandler<EventDTO> AddEventToDayPlan;
+
+        public event EventHandler<EventDTO> EventSelected;
+
+
+
         public List<string> DatesWithNoDayPlan { get => (List<string>)DropDownDateSelection.ItemsSource; set => DropDownDateSelection.ItemsSource = value; }
 
-        public List<string> EventsOnDate { get => (List<string>)ShowEventsListBox.ItemsSource; set => ShowEventsListBox.ItemsSource = value; }
+        public List<EventDTO> EventsOnDate { get => ShowEventsListBox.ItemsSource as List<EventDTO>; set => ShowEventsListBox.ItemsSource = value; }
 
-        public List<string> AddedEvents { get => (List<string>)AddedEventsListBox.ItemsSource; set => AddedEventsListBox.ItemsSource = value; }
+        public List<EventDTO> AddedEvents { get => AddedEventsListBox.ItemsSource as List<EventDTO>; set => AddedEventsListBox.ItemsSource = value; }
 
         public AddDayPlanWindow()
         {
             InitializeComponent();
-            AddedEvents = new List<string>();
+            AddedEvents = new List<EventDTO>();
             AddedEventsListBox.ItemsSource = AddedEvents;
         }
 
@@ -47,28 +54,22 @@ namespace GentseFeestenPlanner.WPF
 
         private void AddToPlanButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ShowEventsListBox.SelectedItem != null)
+            EventDTO selectedEvent = ShowEventsListBox.SelectedItem as EventDTO;
+            if (selectedEvent != null)
             {
-                string selectedEvent = ShowEventsListBox.SelectedItem.ToString();
-                AddedEvents.Add(selectedEvent); // Add to the underlying data source
-
-                AddedEventsListBox.Items.Refresh(); // Refresh the ListBox to reflect changes
-            }
-            else
-            {
-                MessageBox.Show("Please select an event to add.", "No Event Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                AddEventToDayPlan?.Invoke(this, selectedEvent);
+                AddedEvents.Add(selectedEvent);
+                AddedEventsListBox.Items.Refresh();
+                
             }
         }
 
         private void SavePlanButton_Click(object sender, RoutedEventArgs e)
         {
-            // Ensure there are actually events to save
             if (AddedEvents != null && AddedEvents.Any())
             {
-                // Create a new instance of EventsArgs with the added events
                 EventsArgs args = new EventsArgs(AddedEvents);
 
-                // Invoke the event with the custom EventArgs
                 SaveDayPlan?.Invoke(this, args);
             }
             else
@@ -77,19 +78,29 @@ namespace GentseFeestenPlanner.WPF
             }
 
             Close();
-
         }
 
         public class EventsArgs : EventArgs
         {
-            public List<string> Events { get; set; }
+            public List<EventDTO> Events { get; set; }
 
-            public EventsArgs(List<string> events)
+            public EventsArgs(List<EventDTO> events)
             {
                 Events = events;
             }
         }
 
+        private void ShowEventsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ShowEventsListBox.SelectedItem is EventDTO selectedEvent)
+            {
+                EventSelected?.Invoke(this, selectedEvent);
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid event.", "No Event Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
 
+        }
     }
 }

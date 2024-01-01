@@ -27,7 +27,7 @@
             <ComboBox Name="DropDownDateSelection" SelectionChanged="DropDownDateSelection_SelectionChanged"  />
         </StackPanel>
 
-        <ListBox Grid.Column="0" Grid.Row="2" Name="ShowEventsListBox" Margin="10,10,10,10"/>
+        <ListBox Grid.Column="0" Grid.Row="2" Name="ShowEventsListBox" Margin="10,10,10,10" MouseDoubleClick="ShowEventsListBox_MouseDoubleClick"/>
 
         <Button Grid.Column="1" Grid.Row="2" Content="Add To Plan" Height="30" Width="80"/>
 
