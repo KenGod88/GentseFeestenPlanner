@@ -1,4 +1,5 @@
-﻿using GentseFeestenPlanner.Domain.Model;
+﻿using GentseFeestenPlanner.Domain.DTO;
+using GentseFeestenPlanner.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace GentseFeestenPlanner.Domain.Repository
 
         List<DateTime> GetDatesWithNoDayplan(int userId);
         Event GetEventById(string eventId);
+        void AddEventToDayPlan(int userId, Event eventToAdd);
     }
 }

@@ -8,11 +8,13 @@ namespace GentseFeestenPlanner.Domain
     {
         private IUserRepository _userRepository;
         private IEventRepository _eventRepository;
+        
 
         public DomainManager(IUserRepository userRepository, IEventRepository eventRepository)
         {
             _userRepository = userRepository;
             _eventRepository = eventRepository;
+           
         }
 
         public Dictionary<int, string> GetAllUsers()
@@ -74,8 +76,22 @@ namespace GentseFeestenPlanner.Domain
             return UniqueEvents;
         }
 
-        
-        
+        public List<EventDTO> GetEventsOnDateAsEventDTO(string date)
+        {
+            List<EventDTO> events = new List<EventDTO>();
+            DateTime dateTime = DateTime.Parse(date);
+            List<Event> eventsToConvert = _eventRepository.GetAllEventsByDate(dateTime);
+
+            eventsToConvert = eventsToConvert.OrderBy(e => e.StartTime).ToList();
+
+            foreach (Event e in eventsToConvert)
+            {
+                events.Add(new EventDTO(e.EventId, e.Title, e.Price, e.StartTime, e.EndTime, e.Description));
+            }
+
+            return events;
+        }
+
         public EventDTO GetEventById(string eventId)
         {
             Event eventToReturn = _eventRepository.GetEventById(eventId);
@@ -101,40 +117,33 @@ namespace GentseFeestenPlanner.Domain
 
         public void MakeDayPlan(int userId, string date, List<EventDTO> events)
         {
-            DateTime dayPlanDate = DateTime.Parse(date);
-            User user = _userRepository.GetUserById(userId); // Retrieve the user
-            DayPlan dayPlan = new DayPlan(dayPlanDate, user); // Create a new DayPlan instance
-            List<DayPlan> existingDayPlans = _userRepository.GetDayPlansForUser(userId, user); // Retrieve all existing day plans for the user
+        }
 
-            //SqlTransaction transaction = _userRepository.BeginTransaction();
-            try
-                {
-                    // Add the day plan to the database
-                    _userRepository.AddDayPlan(dayPlan);
+        public void AddEventToDayPlan(int userId, EventDTO e)
+        {
+            User user = _userRepository.GetUserById(userId);
+            Event eventToCheck = ConvertToEvent(e);
+            DayPlan dayPlan = new DayPlan(DateTime.Parse(e.StartTime.ToShortDateString()), user);
 
-                    // For each EventDTO, convert it to Event, validate, and add to the day plan
-                    foreach (EventDTO eventDto in events)
-                    {
-                        Event eventToAdd = _eventRepository.GetEventById(eventDto.EventId);
-                        // Validation and adding events to the day plan should go here
-                        if (dayPlan.CheckEvent(eventToAdd, user, existingDayPlans))
-                            {
-                            // Once validated, add the event to the DayPlanEvents table
-                            _userRepository.AddEventToDayPlan(user.UserId, dayPlanDate, eventToAdd.EventId);
-                        }
-                    }
-
-                    // If everything is successful, commit the transaction
-                    //transaction.Commit();
-                }
-                catch
-                {
-                throw;
-                    // If there's an error, roll back the transaction
-                    //transaction.Rollback();
-                     // Rethrow the exception to handle it at a higher level
-                }
             
+
+            if (dayPlan.CheckEvent(eventToCheck, user, _userRepository.GetDayPlansForUser(userId, user)))
+            {
+                _eventRepository.AddEventToDayPlan(userId, eventToCheck);
+            }
+
+        }
+
+        public Event ConvertToEvent(EventDTO eventDTO)
+        {
+            return new Event(
+        eventDTO.EventId,
+        eventDTO.Title,
+        eventDTO.Description, 
+        eventDTO.StartTime,
+        eventDTO.EndTime,
+        eventDTO.Price
+    );
         }
     }
 }

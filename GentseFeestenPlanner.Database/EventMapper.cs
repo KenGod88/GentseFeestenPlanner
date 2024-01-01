@@ -1,4 +1,5 @@
-﻿using GentseFeestenPlanner.Domain.Model;
+﻿using GentseFeestenPlanner.Domain.DTO;
+using GentseFeestenPlanner.Domain.Model;
 using GentseFeestenPlanner.Domain.Repository;
 using Microsoft.Data.SqlClient;
 
@@ -144,6 +145,82 @@ namespace GentseFeestenPlanner.Database
 
             return eventToReturn;
             
+        }
+
+        public void AddEventToDayPlan(int userId, Event eventToAdd)
+        {
+
+            // Ensure the connection is open
+            _connection.Open();
+
+            // Start a transaction
+            SqlTransaction transaction = _connection.BeginTransaction();
+
+            try
+            {
+                // Check if there's an existing DayPlan for the user and the event's date
+                string checkDayPlanQuery = @"
+            SELECT DayPlanId FROM DayPlans 
+            WHERE UserId = @UserId AND Date = CAST(@EventDate AS DATE)";
+
+                SqlCommand checkDayPlanCommand = new SqlCommand(checkDayPlanQuery, _connection, transaction);
+                checkDayPlanCommand.Parameters.AddWithValue("@UserId", userId);
+                checkDayPlanCommand.Parameters.AddWithValue("@EventDate", eventToAdd.StartTime);
+
+                int? dayPlanId = (int?)checkDayPlanCommand.ExecuteScalar();
+
+                // If there's no DayPlan for that date, create one
+                if (!dayPlanId.HasValue)
+                {
+                    string insertDayPlanQuery = "INSERT INTO DayPlans (UserId, Date) OUTPUT INSERTED.DayPlanId VALUES (@UserId, CAST(@EventDate AS DATE))";
+
+                    SqlCommand insertDayPlanCommand = new SqlCommand(insertDayPlanQuery, _connection, transaction);
+                    insertDayPlanCommand.Parameters.AddWithValue("@UserId", userId);
+                    insertDayPlanCommand.Parameters.AddWithValue("@EventDate", eventToAdd.StartTime);
+
+                    // Retrieve the new DayPlanId
+                    dayPlanId = (int)insertDayPlanCommand.ExecuteScalar();
+                }
+
+                // Now that we have a DayPlanId, we can add the event to the DayPlanEvents
+                // First, ensure that the event isn't already added to the day plan
+                string checkEventInDayPlanQuery = "SELECT COUNT(*) FROM DayPlanEvents WHERE DayPlanId = @DayPlanId AND EventId = @EventId";
+
+                SqlCommand checkEventInDayPlanCommand = new SqlCommand(checkEventInDayPlanQuery, _connection, transaction);
+                checkEventInDayPlanCommand.Parameters.AddWithValue("@DayPlanId", dayPlanId.Value);
+                checkEventInDayPlanCommand.Parameters.AddWithValue("@EventId", new Guid(eventToAdd.EventId));
+
+                int eventCount = (int)checkEventInDayPlanCommand.ExecuteScalar();
+
+                if (eventCount == 0)
+                {
+                    string addEventToDayPlanQuery = @"
+                INSERT INTO DayPlanEvents (DayPlanId, EventId) 
+                VALUES (@DayPlanId, @EventId)";
+
+                    SqlCommand addEventToDayPlanCommand = new SqlCommand(addEventToDayPlanQuery, _connection, transaction);
+                    addEventToDayPlanCommand.Parameters.AddWithValue("@DayPlanId", dayPlanId.Value);
+                    addEventToDayPlanCommand.Parameters.AddWithValue("@EventId", new Guid(eventToAdd.EventId));
+
+                    addEventToDayPlanCommand.ExecuteNonQuery();
+                }
+
+                // Commit the transaction
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                // Rollback the transaction on error
+                transaction.Rollback();
+                throw; // Re-throw the exception to handle it in the calling code
+            }
+            finally
+            {
+                // Close the connection
+                _connection.Close();
+            }
+
+
         }
     }
 }
