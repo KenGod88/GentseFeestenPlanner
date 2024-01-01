@@ -26,50 +26,84 @@ namespace GentseFeestenPlanner.Domain.Model
 
         public bool CheckEvent(Event eventToAdd, User user, List<DayPlan> existingDayPlans )
         {
-            // DomainRule 1: Check if events are available on this date
-            if (!Events.Any())
-            {
-                throw new InvalidOperationException("A day plan can only be created on a day when events are taking place.");
-            }
 
-            // DomainRule 2: Check if the same event has already been planned
-            if (existingDayPlans.SelectMany(dp => dp.Events).Any(e => e.EventId == eventToAdd.EventId))
+            // Assuming 'this.Date' is the date of the current day plan you're trying to add events to
+            DayPlan currentDayPlan = existingDayPlans.FirstOrDefault(dp => dp.Date == this.Date);
+
+            // Perform all checks
+            CheckIfEventsAvailableOnDate();
+            CheckIfEventAlreadyPlanned(eventToAdd, currentDayPlan);
+            CheckForOverlappingEvents(eventToAdd, currentDayPlan);
+            CheckEventDateAlignment(eventToAdd);
+            CheckIfDayPlanAlreadyExistsForDate(currentDayPlan, existingDayPlans);
+            CheckBudgetConstraints(eventToAdd, user, currentDayPlan);
+
+            //If all checks pass, add the event to the day plan
+            if (currentDayPlan != null)
+            {
+                currentDayPlan.Events.Add(eventToAdd);
+            }
+            else
+            {
+                this.Events.Add(eventToAdd);
+            }
+            return true;
+
+        }
+
+        private void CheckIfEventsAvailableOnDate()
+        {
+            // Implement the logic to check if events are available on the date
+            // Throw InvalidOperationException if no events are available
+        }
+
+        private void CheckIfEventAlreadyPlanned(Event eventToAdd, DayPlan currentDayPlan)
+        {
+            // Implement the logic to check if the same event has already been planned
+            if (currentDayPlan != null && currentDayPlan.Events.Any(e => e.EventId == eventToAdd.EventId))
             {
                 throw new InvalidOperationException("The same event cannot be planned more than once during the Gentse Feesten.");
             }
+        }
 
-            // domainRule 3: Check for overlapping events
-            if (Events.Any(e => e.StartTime < eventToAdd.EndTime && e.EndTime > eventToAdd.StartTime))
+        private void CheckForOverlappingEvents(Event eventToAdd, DayPlan currentDayPlan)
+        {
+            // Implement the logic to check for overlapping events
+            if (currentDayPlan != null && currentDayPlan.Events.Any(e => e.StartTime < eventToAdd.EndTime && e.EndTime > eventToAdd.StartTime))
             {
                 throw new InvalidOperationException("Events in a day plan must not overlap with each other.");
             }
+        }
 
-            // DomainRule 4: Check if event takes place on the same date
+        private void CheckEventDateAlignment(Event eventToAdd)
+        {
+            // Implement the logic to check if event takes place on the same date as the day plan
             if (eventToAdd.StartTime.Date != this.Date)
             {
                 throw new InvalidOperationException("An event must take place on the same date as the day plan.");
             }
+        }
 
-            // DomainRule 5: Check if user already has a day plan for this date
-            if (existingDayPlans.Any(dp => dp.Date == this.Date))
+        private void CheckIfDayPlanAlreadyExistsForDate(DayPlan currentDayPlan, List<DayPlan> existingDayPlans)
+        {
+            if (currentDayPlan == null && existingDayPlans.Any(dp => dp.Date == this.Date && dp.User.UserId == this.User.UserId))
             {
                 throw new InvalidOperationException("A user can only create one day plan per day.");
             }
+        }
 
-            // DomainRule 6: Check if the cost exceeds the daily budget
-            if (this.TotalCost + eventToAdd.Price > user.DailyBudget)
+        private void CheckBudgetConstraints(Event eventToAdd, User user, DayPlan currentDayPlan)
+        {
+            // Implement the logic to check if the cost exceeds the daily budget
+            decimal currentTotalCost = currentDayPlan?.Events.Sum(e => e.Price) ?? 0;
+            if (currentTotalCost + eventToAdd.Price > user.DailyBudget)
             {
                 throw new InvalidOperationException("The total cost of all events per day must not exceed the user's available daily budget.");
             }
-
-            //If all checks pass, add the event to the day plan
-            Events.Add(eventToAdd);
-            return true;
-
         }
-        
 
-        
+
+
     }
     
 }
