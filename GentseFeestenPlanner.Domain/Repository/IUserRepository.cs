@@ -19,6 +19,7 @@ namespace GentseFeestenPlanner.Domain.Repository
         public void AddEventToDayPlan(int userId, DateTime dayplanDate, string eventId);
         List<DayPlan> GetDayPlansForUser(int userId, User user);
         void AddDayPlan(DayPlan dayPlan);
+        DayPlan GetDayPlanForUserOnDate(int userId, DateTime date);
         //IDisposable BeginTransaction();
     }
 }

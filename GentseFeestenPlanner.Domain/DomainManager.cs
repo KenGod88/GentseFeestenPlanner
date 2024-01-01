@@ -8,13 +8,11 @@ namespace GentseFeestenPlanner.Domain
     {
         private IUserRepository _userRepository;
         private IEventRepository _eventRepository;
-        
 
         public DomainManager(IUserRepository userRepository, IEventRepository eventRepository)
         {
             _userRepository = userRepository;
             _eventRepository = eventRepository;
-           
         }
 
         public Dictionary<int, string> GetAllUsers()
@@ -119,19 +117,29 @@ namespace GentseFeestenPlanner.Domain
         {
         }
 
+        public DayPlan GetDayplanForUserOnDate(int userId, DateTime date)
+        {
+            return _userRepository.GetDayPlanForUserOnDate(userId, date);
+        }
+
         public void AddEventToDayPlan(int userId, EventDTO e)
         {
+            DateTime eventDate = DateTime.Parse(e.StartTime.ToShortDateString());
             User user = _userRepository.GetUserById(userId);
             Event eventToCheck = ConvertToEvent(e);
-            DayPlan dayPlan = new DayPlan(DateTime.Parse(e.StartTime.ToShortDateString()), user);
+            DayPlan dayPlan = _userRepository.GetDayPlanForUserOnDate(userId, eventDate);
+            List<Event> eventsForDayPlan = _eventRepository.GetEventsForUserDayPlan(userId, eventDate);
 
-            
-
-            if (dayPlan.CheckEvent(eventToCheck, user, _userRepository.GetDayPlansForUser(userId, user)))
+            if (dayPlan == null)
             {
-                _eventRepository.AddEventToDayPlan(userId, eventToCheck);
+                dayPlan = new DayPlan(eventDate, user);
             }
 
+            if (dayPlan.CheckEvent(eventToCheck, user, dayPlan, eventsForDayPlan))
+            {
+                _eventRepository.AddEventToDayPlan(userId, eventToCheck);
+                dayPlan.Events.Add(eventToCheck);
+            }
         }
 
         public Event ConvertToEvent(EventDTO eventDTO)
@@ -139,11 +147,11 @@ namespace GentseFeestenPlanner.Domain
             return new Event(
         eventDTO.EventId,
         eventDTO.Title,
-        eventDTO.Description, 
+        eventDTO.Description,
         eventDTO.StartTime,
         eventDTO.EndTime,
         eventDTO.Price
-    );
+             );
         }
     }
 }

@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GentseFeestenPlanner.StartUp", "GentseFeestenPlanner.StartUp\GentseFeestenPlanner.StartUp.csproj", "{5ACB8458-5639-44F1-96F2-476E348058C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GentseFeestenPlanner.StartUp", "GentseFeestenPlanner.StartUp\GentseFeestenPlanner.StartUp.csproj", "{5ACB8458-5639-44F1-96F2-476E348058C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GentseFeestenPlanner.WPF", "GentseFeestenPlanner.WPF\GentseFeestenPlanner.WPF.csproj", "{A00A2A58-9BA4-43E3-936B-F9C0500DAAB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GentseFeestenPlanner.WPF", "GentseFeestenPlanner.WPF\GentseFeestenPlanner.WPF.csproj", "{A00A2A58-9BA4-43E3-936B-F9C0500DAAB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GentseFeestenPlanner.Database", "GentseFeestenPlanner.Database\GentseFeestenPlanner.Database.csproj", "{C09BD5AE-604C-4069-B90B-CECD1821033A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GentseFeestenPlanner.Database", "GentseFeestenPlanner.Database\GentseFeestenPlanner.Database.csproj", "{C09BD5AE-604C-4069-B90B-CECD1821033A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GentseFeestenPlanner.Domain", "GentseFeestenPlanner.Domain\GentseFeestenPlanner.Domain.csproj", "{7EBAF0C9-0D4D-4284-928D-6C25C9C471C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GentseFeestenPlanner.Domain", "GentseFeestenPlanner.Domain\GentseFeestenPlanner.Domain.csproj", "{7EBAF0C9-0D4D-4284-928D-6C25C9C471C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVDataInitializer", "CSVDataInitializer\CSVDataInitializer.csproj", "{ED8DE65A-9B24-4498-951B-8A3B2C0FEA5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSVDataInitializer", "CSVDataInitializer\CSVDataInitializer.csproj", "{ED8DE65A-9B24-4498-951B-8A3B2C0FEA5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GentseFeestenPlanner.Tests", "GentseFeestenPlanner.Tests\GentseFeestenPlanner.Tests.csproj", "{C4EAA0C4-D435-4163-81E2-112AA629F671}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{ED8DE65A-9B24-4498-951B-8A3B2C0FEA5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED8DE65A-9B24-4498-951B-8A3B2C0FEA5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED8DE65A-9B24-4498-951B-8A3B2C0FEA5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4EAA0C4-D435-4163-81E2-112AA629F671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4EAA0C4-D435-4163-81E2-112AA629F671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4EAA0C4-D435-4163-81E2-112AA629F671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4EAA0C4-D435-4163-81E2-112AA629F671}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

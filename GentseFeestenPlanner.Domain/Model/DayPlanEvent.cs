@@ -12,9 +12,12 @@ namespace GentseFeestenPlanner.Domain.Model
         {
             DayPlanId = dayPlanId;
             EventId = eventId;
+            
         }
 
         public int DayPlanId { get; set; }
         public string EventId { get; set; }
+
+       
     }
 }
