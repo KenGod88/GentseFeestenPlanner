@@ -8,13 +8,11 @@ namespace GentseFeestenPlanner.Domain.Model
 {
     public class DayPlan
     {
-        public DayPlan( DateTime date, User user)
+        public DayPlan(DateTime date, User user)
         {
-            
             Date = date;
             User = user;
             Events = new List<Event>();
-            
         }
 
         public DayPlan()
@@ -27,20 +25,16 @@ namespace GentseFeestenPlanner.Domain.Model
         public List<Event> Events { get; set; }
         public decimal TotalCost => Events.Sum(e => e.Price);
 
-
-        public bool CheckEvent(Event eventToAdd, User user, DayPlan existingDayPlan, List<Event> events )
+        public bool CheckEvent(Event eventToAdd, User user, DayPlan existingDayPlan, List<Event> events)
         {
-
             // Assuming 'this.Date' is the date of the current day plan you're trying to add events to
             DayPlan currentDayPlan = (existingDayPlan != null && existingDayPlan.Date == this.Date && existingDayPlan.User.UserId == user.UserId) ? existingDayPlan : null;
             currentDayPlan.Events = events;
 
             // Perform all checks
-            CheckIfEventsAvailableOnDate();
+
             CheckIfEventAlreadyPlanned(eventToAdd, currentDayPlan);
             CheckForOverlappingEvents(eventToAdd, currentDayPlan);
-            CheckEventDateAlignment(eventToAdd);
-            CheckIfDayPlanAlreadyExistsForDate(currentDayPlan, existingDayPlan);
             CheckBudgetConstraints(eventToAdd, user, currentDayPlan);
 
             //If all checks pass, add the event to the day plan
@@ -53,13 +47,6 @@ namespace GentseFeestenPlanner.Domain.Model
                 Events.Add(eventToAdd);
             }
             return true;
-
-        }
-
-        public void CheckIfEventsAvailableOnDate()
-        {
-            // Implement the logic to check if events are available on the date
-            // Throw InvalidOperationException if no events are available
         }
 
         public void CheckIfEventAlreadyPlanned(Event eventToAdd, DayPlan currentDayPlan)
@@ -80,15 +67,6 @@ namespace GentseFeestenPlanner.Domain.Model
             }
         }
 
-        public void CheckEventDateAlignment(Event eventToAdd)
-        {
-            // Implement the logic to check if event takes place on the same date as the day plan
-            if (eventToAdd.StartTime.Date != this.Date)
-            {
-                throw new InvalidOperationException("An event must take place on the same date as the day plan.");
-            }
-        }
-
         public void CheckIfDayPlanAlreadyExistsForDate(DayPlan currentDayPlan, DayPlan existingDayPlan)
         {
             if (currentDayPlan == null && existingDayPlan != null && existingDayPlan.Date == this.Date && existingDayPlan.User.UserId == this.User.UserId)
@@ -106,9 +84,5 @@ namespace GentseFeestenPlanner.Domain.Model
                 throw new InvalidOperationException("The total cost of all events per day must not exceed the user's available daily budget.");
             }
         }
-
-
-
     }
-    
 }
