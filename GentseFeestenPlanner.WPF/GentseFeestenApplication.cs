@@ -56,7 +56,7 @@ namespace GentseFeestenPlanner.WPF
             OpenAddDayPlanWindow();
 
             List<string> DatesWithNoDayPlan = _domainManager.GetDatesWithNoDayplan(_userDetailWindow.UserId);
-            _addDayPlanWindow.DailyBudget = _userDetailWindow.DailyBudget ;
+            _addDayPlanWindow.DailyBudget = _userDetailWindow.DailyBudget;
             _addDayPlanWindow.DatesWithNoDayPlan = DatesWithNoDayPlan;
             _addDayPlanWindow.DateSelected += _addDayPlanWindow_DateSelected;
             _addDayPlanWindow.EventSelected += _addDayPlanWindow_EventSelected;
@@ -78,37 +78,18 @@ namespace GentseFeestenPlanner.WPF
             List<EventDTO> EventsOnDate = _domainManager.GetEventsOnDateAsEventDTO(e);
 
             _addDayPlanWindow.EventsOnDate = EventsOnDate;
-            _addDayPlanWindow.SaveDayPlan += _addDayPlanWindow_SaveDayPlan;
             _addDayPlanWindow.AddEventToDayPlan += _addDayPlanWindow_AddEventToDayPlan;
         }
 
         private void _addDayPlanWindow_AddEventToDayPlan(object? sender, EventDTO e)
         {
-            try 
+            try
             {
-                _domainManager.AddEventToDayPlan(_userDetailWindow.UserId, e); 
-            }catch(InvalidOperationException ex)
+                _domainManager.AddEventToDayPlan(_userDetailWindow.UserId, e);
+            }
+            catch (InvalidOperationException ex)
             {
-              
                 throw;
-            }
-            
-            
-        }
-
-        private void _addDayPlanWindow_SaveDayPlan(object? sender, EventArgs e)
-        {
-            string date = _addDayPlanWindow.DropDownDateSelection.SelectedItem.ToString();
-
-            if (e is EventsArgs customArgs)
-            {
-                List<EventDTO> events = customArgs.Events;
-
-                _domainManager.MakeDayPlan(_userDetailWindow.UserId, date, events);
-            }
-            else
-            {
-                MessageBox.Show("Invalid event data provided.");
             }
         }
 
@@ -141,7 +122,6 @@ namespace GentseFeestenPlanner.WPF
 
         private void OpenEventDetailWindow()
         {
-
             _lastOpenWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
             _userDetailWindow.Hide();
             _eventDetailWindow = new EventDetailWindow();
