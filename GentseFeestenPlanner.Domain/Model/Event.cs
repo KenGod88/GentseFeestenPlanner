@@ -18,9 +18,7 @@ namespace GentseFeestenPlanner.Domain.Model
             Price = price;
         }
 
-        public Event()
-        {
-        }
+        
 
         public string EventId { get; set; }
         public string Title { get; set; }
