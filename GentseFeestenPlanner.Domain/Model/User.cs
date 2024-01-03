@@ -16,10 +16,7 @@ namespace GentseFeestenPlanner.Domain.Model
             DailyBudget = dailyBudget;
             
         }
-        public User()
-        {
-            DayPlans = new List<DayPlan>();
-        }
+       
 
         public int UserId { get; set; }
         public string FirstName { get; set; }
