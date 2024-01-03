@@ -6,16 +6,22 @@ string connectionString = "Data Source=Laptop_ken\\SQLEXPRESS;Initial Catalog=Ge
 // Clear existing data in tables before loading
 ClearDatabaseTables(connectionString);
 
-// Load events from CSV
-List<Event> events = LoadEventsFromCsv("gentse-feesten-evenementen-202324.csv");
+string eventsFilePath = AppDomain.CurrentDomain.BaseDirectory + "gentse-feesten-evenementen-202324.csv";
 
-// Load VIP users from CSV
-List<User> Users = LoadUsersFromCsv("vip_users.csv");
+string usersFilePath = AppDomain.CurrentDomain.BaseDirectory + "vip_users.csv";
+
+
+List<Event> events = LoadEventsFromCsv(AppDomain.CurrentDomain.BaseDirectory + "gentse-feesten-evenementen-202324.csv");
+
+
+List<User> users = LoadUsersFromCsv(AppDomain.CurrentDomain.BaseDirectory + "vip_users.csv");
+
+
 
 
 
 // Insert data into the database
-InsertDataIntoDatabase(connectionString, events, Users);
+InsertDataIntoDatabase(connectionString, events, users);
 
 Console.WriteLine("Data loaded successfully.");
 
@@ -25,6 +31,13 @@ static void ClearDatabaseTables(string connectionString)
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
         connection.Open();
+
+        SqlCommand deleteDayPlanEventsCommand = new SqlCommand("DELETE FROM DayPlanEvents", connection);
+        deleteDayPlanEventsCommand.ExecuteNonQuery();
+
+        
+        SqlCommand deleteDayPlansCommand = new SqlCommand("DELETE FROM DayPlans", connection);
+        deleteDayPlansCommand.ExecuteNonQuery();
 
         SqlCommand deleteEventsCommand = new SqlCommand("DELETE FROM Events", connection);
         deleteEventsCommand.ExecuteNonQuery();
