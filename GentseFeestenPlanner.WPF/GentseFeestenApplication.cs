@@ -56,6 +56,7 @@ namespace GentseFeestenPlanner.WPF
             OpenAddDayPlanWindow();
 
             List<string> DatesWithNoDayPlan = _domainManager.GetDatesWithNoDayplan(_userDetailWindow.UserId);
+            _addDayPlanWindow.DailyBudget = _userDetailWindow.DailyBudget ;
             _addDayPlanWindow.DatesWithNoDayPlan = DatesWithNoDayPlan;
             _addDayPlanWindow.DateSelected += _addDayPlanWindow_DateSelected;
             _addDayPlanWindow.EventSelected += _addDayPlanWindow_EventSelected;

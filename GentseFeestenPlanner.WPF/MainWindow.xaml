@@ -32,7 +32,7 @@
                    FontSize="20"
                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,80,20,20" />
 
-        <!-- Search Box -->
+        
         <TextBox Grid.Row="1" Grid.Column="0" Name="SearchBox" Text="Seach by name"
                  Width="150"
                  HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -40,6 +40,6 @@
 
         
 
-        <ListBox Grid.Row="1" Grid.Column="1" Name="UserListBox" MouseDoubleClick="UserListBox_MouseDoubleClick" />
+        <ListBox Grid.Row="1" Grid.Column="1" Name="UserListBox" MouseDoubleClick="UserListBox_MouseDoubleClick" Margin="10,10,10,10" />
     </Grid>
 </Window>

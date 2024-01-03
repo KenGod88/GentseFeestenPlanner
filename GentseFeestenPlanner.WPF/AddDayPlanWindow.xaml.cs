@@ -37,6 +37,17 @@ namespace GentseFeestenPlanner.WPF
 
         public List<EventDTO> AddedEvents { get => AddedEventsListBox.ItemsSource as List<EventDTO>; set => AddedEventsListBox.ItemsSource = value; }
 
+        public decimal DailyBudget { 
+            get 
+            { 
+                return decimal.Parse(BudgetTextBox.Text);
+            } 
+            set 
+            { 
+                BudgetTextBox.Text = value.ToString() + " Euro"; 
+            } 
+        }
+
         public AddDayPlanWindow()
         {
             InitializeComponent();
