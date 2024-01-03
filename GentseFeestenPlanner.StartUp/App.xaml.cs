@@ -15,16 +15,18 @@ namespace GentseFeestenPlanner.StartUp
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-
             IUserRepository userRepository = new UserMapper();
             IEventRepository eventRepository = new EventMapper();
+            
             DomainManager domainManager = new DomainManager(userRepository, eventRepository);
             GentseFeestenApplication gentseFeestenApplication = new GentseFeestenApplication(domainManager);
+        }
 
-            
-
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show("An unexpected error occured.", "Unexpected Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
 
         }
     }
-
 }
