@@ -57,5 +57,35 @@ namespace GentseFeestenPlanner.WPF
                 return -1;
             }
         }
+
+        private void SearchBox_KeyUp(object sender, KeyEventArgs e)
+        {
+
+            // Filter users based on the search text
+            var searchText = SearchBox.Text.ToLower();
+            var filteredUsers = _users.Where(kv => kv.Value.ToLower().Contains(searchText)).ToDictionary(kv => kv.Key, kv => kv.Value);
+
+            // Update the ListBox with the filtered users
+            UserListBox.ItemsSource = filteredUsers.Values;
+
+        }
+
+        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (SearchBox.Text == "Seach by name")
+            {
+                SearchBox.Text = string.Empty;
+            }
+
+        }
+
+        private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(SearchBox.Text))
+            {
+                SearchBox.Text = "Seach by name";
+            }
+
+        }
     }
 }
