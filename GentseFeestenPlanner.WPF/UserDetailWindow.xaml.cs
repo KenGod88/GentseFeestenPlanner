@@ -41,8 +41,6 @@ namespace GentseFeestenPlanner.WPF
             InitializeComponent();
         }
 
-        
-
         private void DayPlanDetailsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (DayPlanDetailsListBox.SelectedItem is EventDTO selectedEvent)

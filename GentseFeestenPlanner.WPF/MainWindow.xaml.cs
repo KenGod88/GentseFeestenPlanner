@@ -60,14 +60,10 @@ namespace GentseFeestenPlanner.WPF
 
         private void SearchBox_KeyUp(object sender, KeyEventArgs e)
         {
-
-            // Filter users based on the search text
             var searchText = SearchBox.Text.ToLower();
             var filteredUsers = _users.Where(kv => kv.Value.ToLower().Contains(searchText)).ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            // Update the ListBox with the filtered users
             UserListBox.ItemsSource = filteredUsers.Values;
-
         }
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
@@ -76,7 +72,6 @@ namespace GentseFeestenPlanner.WPF
             {
                 SearchBox.Text = string.Empty;
             }
-
         }
 
         private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
@@ -85,7 +80,6 @@ namespace GentseFeestenPlanner.WPF
             {
                 SearchBox.Text = "Seach by name";
             }
-
         }
     }
 }
