@@ -23,13 +23,9 @@ namespace GentseFeestenPlanner.WPF
     {
         public event EventHandler<string> DateSelected;
 
-        public event EventHandler<EventArgs> SaveDayPlan;
-
         public event EventHandler<EventDTO> AddEventToDayPlan;
 
         public event EventHandler<EventDTO> EventSelected;
-
-
 
         public List<string> DatesWithNoDayPlan { get => (List<string>)DropDownDateSelection.ItemsSource; set => DropDownDateSelection.ItemsSource = value; }
 
@@ -37,15 +33,16 @@ namespace GentseFeestenPlanner.WPF
 
         public List<EventDTO> AddedEvents { get => AddedEventsListBox.ItemsSource as List<EventDTO>; set => AddedEventsListBox.ItemsSource = value; }
 
-        public decimal DailyBudget { 
-            get 
-            { 
+        public decimal DailyBudget
+        {
+            get
+            {
                 return decimal.Parse(BudgetTextBox.Text);
-            } 
-            set 
-            { 
-                BudgetTextBox.Text = value.ToString() + " Euro"; 
-            } 
+            }
+            set
+            {
+                BudgetTextBox.Text = value.ToString() + " Euro";
+            }
         }
 
         public AddDayPlanWindow()
@@ -70,35 +67,16 @@ namespace GentseFeestenPlanner.WPF
             {
                 try
                 {
-                    // Attempt to add the event to the day plan.
                     AddEventToDayPlan?.Invoke(this, selectedEvent);
 
-                    // If no exception is thrown, add the event to the AddedEvents list.
                     AddedEvents.Add(selectedEvent);
                     AddedEventsListBox.Items.Refresh();
                 }
                 catch (InvalidOperationException ex)
                 {
-                    // Show a message box if the event cannot be added due to overlapping.
                     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
-
-        private void SavePlanButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (AddedEvents != null && AddedEvents.Any())
-            {
-                EventsArgs args = new EventsArgs(AddedEvents);
-
-                SaveDayPlan?.Invoke(this, args);
-            }
-            else
-            {
-                MessageBox.Show("There are no events to save.", "No Events", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-
-            Close();
         }
 
         public class EventsArgs : EventArgs
@@ -121,7 +99,6 @@ namespace GentseFeestenPlanner.WPF
             {
                 MessageBox.Show("Please select a valid event.", "No Event Selected", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-
         }
     }
 }
