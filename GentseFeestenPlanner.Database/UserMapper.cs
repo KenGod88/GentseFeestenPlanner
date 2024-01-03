@@ -14,29 +14,38 @@ namespace GentseFeestenPlanner.Database
             _connection = new SqlConnection(ConnectionString);
         }
 
-        
-
         public List<User> GetAllUsers()
         {
             List<User> users = new List<User>();
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                SqlCommand selectUsersCommand = new SqlCommand("SELECT * FROM Users", connection);
-
-                SqlDataReader reader = selectUsersCommand.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    int UserId = (int)reader["UserId"];
-                    string FirstName = (string)reader["FirstName"];
-                    string LastName = (string)reader["LastName"];
-                    decimal DailyBudget = (decimal)reader["DailyBudget"];
+                    connection.Open();
 
-                    users.Add(new User(UserId, FirstName, LastName, DailyBudget));
+                    SqlCommand selectUsersCommand = new SqlCommand("SELECT * FROM Users", connection);
+
+                    SqlDataReader reader = selectUsersCommand.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        int UserId = (int)reader["UserId"];
+                        string FirstName = (string)reader["FirstName"];
+                        string LastName = (string)reader["LastName"];
+                        decimal DailyBudget = (decimal)reader["DailyBudget"];
+
+                        users.Add(new User(UserId, FirstName, LastName, DailyBudget));
+                    }
                 }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             return users;
@@ -58,27 +67,38 @@ namespace GentseFeestenPlanner.Database
         {
             User user = null;
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                // Retrieve user information
-                SqlCommand selectUserCommand = new SqlCommand("SELECT * FROM Users WHERE UserId = @userId", connection);
-                selectUserCommand.Parameters.AddWithValue("@userId", userId);
-
-                SqlDataReader userReader = selectUserCommand.ExecuteReader();
-
-                while (userReader.Read())
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    int UserId = (int)userReader["UserId"];
-                    string FirstName = (string)userReader["FirstName"];
-                    string LastName = (string)userReader["LastName"];
-                    decimal DailyBudget = (decimal)userReader["DailyBudget"];
+                    connection.Open();
 
-                    user = new User(UserId, FirstName, LastName, DailyBudget);
+                    
+                    SqlCommand selectUserCommand = new SqlCommand("SELECT * FROM Users WHERE UserId = @userId", connection);
+                    selectUserCommand.Parameters.AddWithValue("@userId", userId);
+
+                    SqlDataReader userReader = selectUserCommand.ExecuteReader();
+
+                    while (userReader.Read())
+                    {
+                        int UserId = (int)userReader["UserId"];
+                        string FirstName = (string)userReader["FirstName"];
+                        string LastName = (string)userReader["LastName"];
+                        decimal DailyBudget = (decimal)userReader["DailyBudget"];
+
+                        user = new User(UserId, FirstName, LastName, DailyBudget);
+                    }
+
+                    userReader.Close();
                 }
-
-                userReader.Close();
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             return user;
@@ -88,33 +108,44 @@ namespace GentseFeestenPlanner.Database
         {
             List<DayPlan> dayPlans = new List<DayPlan>();
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                // Retrieve day plans for the user
-                SqlCommand selectDayPlansCommand = new SqlCommand("SELECT * FROM DayPlans WHERE UserId = @userId", connection);
-                selectDayPlansCommand.Parameters.AddWithValue("@userId", userId);
-
-                SqlDataReader dayPlansReader = selectDayPlansCommand.ExecuteReader();
-
-                while (dayPlansReader.Read())
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    int dayPlanId = (int)dayPlansReader["DayPlanId"];
-                    DateTime date = (DateTime)dayPlansReader["Date"];
+                    connection.Open();
 
-                    // Create a DayPlan object and add it to the user's list of day plans
-                    DayPlan dayPlan = new DayPlan(date, user);
-                    dayPlans.Add(dayPlan);
+                    
+                    SqlCommand selectDayPlansCommand = new SqlCommand("SELECT * FROM DayPlans WHERE UserId = @userId", connection);
+                    selectDayPlansCommand.Parameters.AddWithValue("@userId", userId);
+
+                    SqlDataReader dayPlansReader = selectDayPlansCommand.ExecuteReader();
+
+                    while (dayPlansReader.Read())
+                    {
+                        int dayPlanId = (int)dayPlansReader["DayPlanId"];
+                        DateTime date = (DateTime)dayPlansReader["Date"];
+
+                       
+                        DayPlan dayPlan = new DayPlan(date, user);
+                        dayPlans.Add(dayPlan);
+                    }
+
+                    dayPlansReader.Close();
                 }
 
-                dayPlansReader.Close();
+                
+                foreach (var dayPlan in dayPlans)
+                {
+                    dayPlan.Events = GetEventsForDayPlan(dayPlan.DayPlanId);
+                }
             }
-
-            // Populate events for each day plan
-            foreach (var dayPlan in dayPlans)
+            catch (SqlException)
             {
-                dayPlan.Events = GetEventsForDayPlan(dayPlan.DayPlanId);
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             return dayPlans;
@@ -124,129 +155,119 @@ namespace GentseFeestenPlanner.Database
         {
             List<Event> events = new List<Event>();
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                // Retrieve events for the day plan
-                SqlCommand selectEventsCommand = new SqlCommand("SELECT e.* FROM DayPlanEvents dpe INNER JOIN Events e ON dpe.EventId = e.EventId WHERE dpe.DayPlanId = @dayPlanId", connection);
-                selectEventsCommand.Parameters.AddWithValue("@dayPlanId", dayPlanId);
-
-                SqlDataReader eventsReader = selectEventsCommand.ExecuteReader();
-
-                while (eventsReader.Read())
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    Guid eventId = (Guid)eventsReader["EventId"];
+                    connection.Open();
 
                     
-                    string eventIdString = eventId.ToString();
-                    string title = (string)eventsReader["Title"];
-                    string description = (string)eventsReader["Description"];
-                    DateTime startTime = (DateTime)eventsReader["StartTime"];
-                    DateTime endTime = (DateTime)eventsReader["EndTime"];
-                    decimal price = (decimal)eventsReader["Price"];
+                    SqlCommand selectEventsCommand = new SqlCommand("SELECT e.* FROM DayPlanEvents dpe INNER JOIN Events e ON dpe.EventId = e.EventId WHERE dpe.DayPlanId = @dayPlanId", connection);
+                    selectEventsCommand.Parameters.AddWithValue("@dayPlanId", dayPlanId);
 
-                    // Create an Event object and add it to the day plan
-                    Event dayPlanEvent = new Event(eventIdString, title, description, startTime, endTime, price);
-                    events.Add(dayPlanEvent);
+                    SqlDataReader eventsReader = selectEventsCommand.ExecuteReader();
+
+                    while (eventsReader.Read())
+                    {
+                        Guid eventId = (Guid)eventsReader["EventId"];
+
+                        string eventIdString = eventId.ToString();
+                        string title = (string)eventsReader["Title"];
+                        string description = (string)eventsReader["Description"];
+                        DateTime startTime = (DateTime)eventsReader["StartTime"];
+                        DateTime endTime = (DateTime)eventsReader["EndTime"];
+                        decimal price = (decimal)eventsReader["Price"];
+
+                        
+                        Event dayPlanEvent = new Event(eventIdString, title, description, startTime, endTime, price);
+                        events.Add(dayPlanEvent);
+                    }
+
+                    eventsReader.Close();
                 }
-
-                eventsReader.Close();
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             return events;
         }
 
-
         public List<DateTime> GetUserDayPlanDates(int userId)
         {
             List<DateTime> dates = new List<DateTime>();
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                SqlCommand selectDatesCommand = new SqlCommand("SELECT DISTINCT CONVERT(DATE, Date) AS DayPlanDate FROM DayPlans WHERE UserId = @userId", connection);
-                selectDatesCommand.Parameters.AddWithValue("@userId", userId);
-
-                SqlDataReader reader = selectDatesCommand.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    DateTime date = (DateTime)reader["DayPlanDate"];
+                    connection.Open();
 
-                    dates.Add(date);
+                    SqlCommand selectDatesCommand = new SqlCommand("SELECT DISTINCT CONVERT(DATE, Date) AS DayPlanDate FROM DayPlans WHERE UserId = @userId", connection);
+                    selectDatesCommand.Parameters.AddWithValue("@userId", userId);
+
+                    SqlDataReader reader = selectDatesCommand.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        DateTime date = (DateTime)reader["DayPlanDate"];
+
+                        dates.Add(date);
+                    }
                 }
             }
-
-            return dates;   
-            
-        }
-
-        public void AddEventToDayPlan(int userId, DateTime dayplanDate, string eventId)
-        {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            catch (SqlException)
             {
-                connection.Open();
-
-                // Retrieve the day plan id for the given user and date
-                SqlCommand selectDayPlanIdCommand = new SqlCommand("SELECT DayPlanId FROM DayPlans WHERE UserId = @userId AND Date = @date", connection);
-                selectDayPlanIdCommand.Parameters.AddWithValue("@userId", userId);
-                selectDayPlanIdCommand.Parameters.AddWithValue("@date", dayplanDate.Date);
-
-                int dayPlanId = (int)selectDayPlanIdCommand.ExecuteScalar();
-
-                // Add the event to the day plan
-                SqlCommand insertEventCommand = new SqlCommand("INSERT INTO DayPlanEvents (DayPlanId, EventId) VALUES (@dayPlanId, @eventId)", connection);
-                insertEventCommand.Parameters.AddWithValue("@dayPlanId", dayPlanId);
-                insertEventCommand.Parameters.AddWithValue("@eventId", eventId);
-
-                insertEventCommand.ExecuteNonQuery();
+                throw;
             }
-           
-            
-        }
-
-        public void AddDayPlan(DayPlan dayPlan)
-        {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            catch (Exception)
             {
-                connection.Open();
-
-                SqlCommand insertDayPlanCommand = new SqlCommand("INSERT INTO DayPlans (Date, UserId) VALUES (@date, @userId)", connection);
-                insertDayPlanCommand.Parameters.AddWithValue("@date", dayPlan.Date.Date);
-                insertDayPlanCommand.Parameters.AddWithValue("@userId", dayPlan.User.UserId);
-
-                insertDayPlanCommand.ExecuteNonQuery();
+                throw;
             }
-            
+
+            return dates;
         }
 
         public DayPlan GetDayPlanForUserOnDate(int userId, DateTime date)
         {
             DayPlan dayPlan = null;
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                SqlCommand selectDayPlanCommand = new SqlCommand("SELECT * FROM DayPlans WHERE UserId = @userId AND Date = @date", connection);
-                selectDayPlanCommand.Parameters.AddWithValue("@userId", userId);
-                selectDayPlanCommand.Parameters.AddWithValue("@date", date.Date);
-
-                SqlDataReader reader = selectDayPlanCommand.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
                 {
-                    int dayPlanId = (int)reader["DayPlanId"];
+                    connection.Open();
 
-                    dayPlan = new DayPlan(date, GetUserById(userId));
-                    dayPlan.DayPlanId = dayPlanId;
+                    SqlCommand selectDayPlanCommand = new SqlCommand("SELECT * FROM DayPlans WHERE UserId = @userId AND Date = @date", connection);
+                    selectDayPlanCommand.Parameters.AddWithValue("@userId", userId);
+                    selectDayPlanCommand.Parameters.AddWithValue("@date", date.Date);
+
+                    SqlDataReader reader = selectDayPlanCommand.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        int dayPlanId = (int)reader["DayPlanId"];
+
+                        dayPlan = new DayPlan(date, GetUserById(userId));
+                        dayPlan.DayPlanId = dayPlanId;
+                    }
                 }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             return dayPlan;
-            
         }
     }
 }
