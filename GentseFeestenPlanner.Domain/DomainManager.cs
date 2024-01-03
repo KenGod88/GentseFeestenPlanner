@@ -8,11 +8,13 @@ namespace GentseFeestenPlanner.Domain
     {
         private IUserRepository _userRepository;
         private IEventRepository _eventRepository;
+        
 
         public DomainManager(IUserRepository userRepository, IEventRepository eventRepository)
         {
             _userRepository = userRepository;
             _eventRepository = eventRepository;
+            
         }
 
         public Dictionary<int, string> GetAllUsers()
